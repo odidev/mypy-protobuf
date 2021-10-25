@@ -22,6 +22,7 @@ jobs:
               ls && \
               ls /usr/bin && \
               pwd && \
+              git checkout ef105c7a5fc003d18d25cc03d8ae3845afae3102 && \
               python3 --version && \
               echo ============installing dependencies=================================== && \
               git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv && \
