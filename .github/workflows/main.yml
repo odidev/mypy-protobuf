@@ -4,7 +4,102 @@ name: CI
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-        
+  run_test:
+    name: ${{ matrix.py-ver-mypy-protobuf }}
+    runs-on: ubuntu-latest
+    env:
+      PY_VER_MYPY: 3.8.11
+      PY_VER_UNIT_TESTS_3: 3.8.11
+    strategy:
+      matrix:
+        # Running mypy-protobuf itself
+        py-ver-mypy-protobuf: [ 3.8.11 ]
+    steps:
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: '3.18.1'
+      - uses: actions/checkout@v2
+      - name: Cache pyenv
+        uses: actions/cache@v2
+        with:
+          path: |
+              ~/.pyenv
+              !~/.pyenv/versions
+          key: pyenv-installation-2
+      - name: Cache pyenv mypy-protobuf ver
+        uses: actions/cache@v2
+        with:
+          path: ~/.pyenv/versions/${{matrix.py-ver-mypy-protobuf}}
+          key: pyenv-${{matrix.py-ver-mypy-protobuf}}-${{hashFiles('setup.py')}}
+      - name: Cache pyenv unit tests 3 ver
+        uses: actions/cache@v2
+        with:
+          path: ~/.pyenv/versions/${{env.PY_VER_UNIT_TESTS_3}}
+          key: pyenv-${{env.PY_VER_UNIT_TESTS_3}}-${{hashFiles('setup.py')}}
+      - name: Cache pyenv mypy ver
+        uses: actions/cache@v2
+        with:
+          path: ~/.pyenv/versions/${{env.PY_VER_MYPY}}
+          key: pyenv-${{env.PY_VER_MYPY}}-${{hashFiles('setup.py')}}
+      - name: Install pyenv
+        run: |
+          if [ ! -e ~/.pyenv/bin/pyenv ]; then
+            rm -rf ~/.pyenv
+            curl https://pyenv.run | bash
+          fi
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init -)"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv virtualenv-init -)"
+          for PY in ${{matrix.py-ver-mypy-protobuf}} ${{env.PY_VER_MYPY}} ${{env.PY_VER_UNIT_TESTS_3}}; do
+            if [ ! -e ~/.pyenv/versions/$PY ]; then
+              pyenv install --skip-existing $PY
+              pyenv shell $PY
+              python -m pip install virtualenv
+            fi
+          done
+      - name: Run Tests (./run_test.sh)
+        env:
+          PY_VER_MYPY_PROTOBUF: ${{matrix.py-ver-mypy-protobuf}}
+          VALIDATE: 1
+        run: |
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init -)"
+          eval "$(pyenv init --path)"
+          eval "$(pyenv virtualenv-init -)"
+          ./run_test.sh
+      - name: Run Pyright
+        uses: jakebailey/pyright-action@v1
+        with:
+          version: 1.1.171
+
+  black:
+    name: Black formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Run black
+        run: |
+          pip3 install black
+          black --check .
+  sanity_check_windows:
+    name: Sanity Check Windows Executable
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+        with:
+          version: '3.18.1'
+      - name: Run Protoc
+        run: |
+          pip3 install -e .
+          mkdir wintestout
+          protoc --python_out=wintestout --mypy_out=wintestout proto\mypy_protobuf\extensions.proto
+  
   arm64_job:
       name: Build and Test for arm64
       runs-on: ubuntu-20.04
@@ -57,7 +152,9 @@ jobs:
               eval "$(pyenv init --path)" && \ 
               eval "$(pyenv virtualenv-init -)" && \
               ./run_test.sh && \
-              source deactivate'
+              venv_project1 deactivate && \
+              source deactivate && \
+              deactivate'
 
 
 #              git checkout 86b96f912fa6abc5abee596d67b1e06807eb7ece && \
