@@ -22,7 +22,6 @@ jobs:
               ls && \
               ls /usr/bin && \
               pwd && \
-              git checkout 86b96f912fa6abc5abee596d67b1e06807eb7ece && \
               python3 --version && \
               echo ============installing dependencies=================================== && \
               git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv && \
@@ -60,3 +59,5 @@ jobs:
               ./run_test.sh && \
               source deactivate'
 
+
+#              git checkout 86b96f912fa6abc5abee596d67b1e06807eb7ece && \
