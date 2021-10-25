@@ -15,12 +15,17 @@ if [ `uname -m` == "aarch64" ]; then
     PY_VER_MYPY=${PY_VER_MYPY:=3.8.11}
     PY_VER_UNIT_TESTS="${PY_VER_UNIT_TESTS_3:=3.8.11}"
     pip install enum34 aenum
+    PROTOC_ARGS="--proto_path=proto/ --experimental_allow_proto3_optional"
+    GRPC_PROTOS=$(find proto/testproto/grpc -name "*.proto")
 else
     PROTOC=${PROTOC:=protoc}
-    PY_VER_MYPY_PROTOBUF=${PY_VER_MYPY_PROTOBUF:=3.9.6}
+    PY_VER_MYPY_PROTOBUF=${PY_VER_MYPY_PROTOBUF:=3.8.11}
     PY_VER_MYPY_PROTOBUF_SHORT=$(echo $PY_VER_MYPY_PROTOBUF | cut -d. -f1-2)
     PY_VER_MYPY=${PY_VER_MYPY:=3.8.11}
     PY_VER_UNIT_TESTS="${PY_VER_UNIT_TESTS_3:=3.8.11}"
+    PROTOC_ARGS="--proto_path=proto/ --experimental_allow_proto3_optional"
+    GRPC_PROTOS=$(find proto/testproto/grpc -name "*.proto")
+
 fi
 
 # Clean out generated/ directory - except for .generated / __init__.py
