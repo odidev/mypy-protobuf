@@ -3,8 +3,8 @@
 RED="\033[0;31m"
 NC='\033[0m'
 if [ `uname -m` == "aarch64" ]; then
-    PROTOC_ZIP=protoc-3.17.3-linux-aarch_64.zip
-    curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/$PROTOC_ZIP
+    PROTOC_ZIP=protoc-3.18.1-linux-aarch_64.zip
+    curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.18.1/$PROTOC_ZIP
     unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
     unzip -o $PROTOC_ZIP -d /usr/local include/*
     PROTOC=${PROTOC:=protoc}
@@ -96,7 +96,7 @@ MYPY_PROTOBUF_VENV=venv_$PY_VER_MYPY_PROTOBUF
     # Generate protos
     python --version
     $PROTOC --version
-    expected="libprotoc 3.17.3"
+    expected="libprotoc 3.18.1"
     if [[ $($PROTOC --version) != $expected ]]; then
         echo -e "${RED}For tests - must install protoc version ${expected} ${NC}"
         exit 1
