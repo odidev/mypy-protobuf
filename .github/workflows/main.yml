@@ -13,7 +13,12 @@ jobs:
     strategy:
       matrix:
         # Running mypy-protobuf itself
-        py-ver-mypy-protobuf: [ 3.8.11 ]
+        py-ver-mypy-protobuf: [
+            3.6.14,
+            3.7.11,
+            3.8.11,
+            3.9.6,
+        ]
     steps:
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
@@ -114,38 +119,18 @@ jobs:
               arm64v8/ubuntu:20.04 \
               bash -exc 'apt-get update && apt install -y python3 python3-pip make build-essential libssl-dev zlib1g-dev vim wget curl git zip unzip git-core gcc llvm libncurses5-dev libffi-dev liblzma-dev libbz2-dev libreadline-dev libsqlite3-dev libncursesw5-dev python-openssl xz-utils dos2unix && \
               ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && export DEBIAN_FRONTEND=noninteractive && apt-get install -y tzdata && dpkg-reconfigure --frontend noninteractive tzdata && \
-              ls && \
-              ls /usr/bin && \
-              pwd && \
-              python3 --version && \
-              echo ============installing dependencies=================================== && \
               git clone https://github.com/pyenv/pyenv.git $HOME/.pyenv && \
-              ls && \
-              echo =========================== contents of HOME ========================== && \
-              ls -a $HOME/ && \
-              file $HOME/.bashrc && \
-              file $HOME/.pyenv && \
-              echo =========================== contents of usr/bin ========================== && \
-              ls /usr/bin && \
-              pwd && \
-              python3 --version && \
               touch $HOME/.bashrc && \
               export PYENV_ROOT="$HOME/.pyenv" >> $HOME/.bashrc && \
               export PATH="$PYENV_ROOT/bin:$PATH" >> $HOME/.bashrc && \
               if command -v pyenv 1>/dev/null 2>&1; then eval "$(pyenv init -)" ; fi >> $HOME/.bashrc && \
-              source $HOME/.bashrc && \
-              pyenv install -l && \
-              pyenv install 3.8.11 && \
-              pyenv versions && \
-              pyenv global 3.8.11 && \
               git clone https://github.com/yyuu/pyenv-virtualenv.git   $HOME/.pyenv/plugins/pyenv-virtualenv && \
               source $HOME/.bashrc && \
               pyenv install 3.8.11 && \
+              pyenv global 3.8.11 && \
               pyenv virtualenv 3.8.11 venv_project1 && \
               pyenv versions && \
               pyenv activate venv_project1 && \
-              pwd && \
-              ls && \
               pip3 install enum34 aenum && \
               export PATH="$HOME/.pyenv/bin:$PATH" && \
               eval "$(pyenv init -)" && \
@@ -155,6 +140,3 @@ jobs:
               venv_project1 deactivate && \
               source deactivate && \
               deactivate'
-
-
-#              git checkout 86b96f912fa6abc5abee596d67b1e06807eb7ece && \
