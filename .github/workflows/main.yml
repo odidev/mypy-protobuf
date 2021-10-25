@@ -53,11 +53,10 @@ jobs:
               pwd && \
               ls && \
               pip3 install enum34 aenum && \
-              export PATH="$HOME/.pyenv/bin:$PATH"
-
+              export PATH="$HOME/.pyenv/bin:$PATH" && \
+              eval "$(pyenv init -)" && \
+              eval "$(pyenv init --path)" && \ 
+              eval "$(pyenv virtualenv-init -)" && \
               ./run_test.sh && \
               source deactivate'
-             
-#             eval "$(pyenv init -)"
-#              eval "$(pyenv init --path)"
-#              eval "$(pyenv virtualenv-init -)"
+
