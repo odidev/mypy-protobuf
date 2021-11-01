@@ -137,6 +137,5 @@ jobs:
               eval "$(pyenv init --path)" && \ 
               eval "$(pyenv virtualenv-init -)" && \
               ./run_test.sh && \
-              venv_project1 deactivate && \
               source deactivate && \
               deactivate'
